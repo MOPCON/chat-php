@@ -1,0 +1,219 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+html,body{margin:0;padding:0;}
+#msgPannel{
+  font-size: 12px;
+  line-height: 1.3em;
+  height:90%;
+  overflow: auto;
+  font-family: monospace;
+}
+.msg{padding: 1px 0.8em;}
+.error{
+  background-color: rgba(255, 0, 0, 0.15);
+  color:#f22;
+}
+.warn{
+  background-color: rgba(255, 180, 150, 0.15);
+  color:#a72;
+}
+.say{
+  color:#333;
+}
+.notice{
+  background-color: rgba(30, 150, 255, 0.15);
+  color:#567;
+}
+.sender{color:blue;}
+</style>
+<!--[if lt IE 9]>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<![endif]-->
+
+<!--[if gte IE 9]><!-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<!--<![endif]-->
+
+</head>
+<body>
+<noscript>您必須開啟 Javascript 功能才能使用聊天室</noscript>
+<div id=''>
+<div id='msgPannel'>
+</div>
+
+</div>
+<script>
+
+$(function(){
+  chatClient.$msg = $('#'+chatClient.msgPannel);
+  chatClient.addMsg('聊天室小精靈啟動！', 'notice');
+  chatClient.presetIdentity();
+  chatClient.connect();
+});
+
+
+chatClient = {
+  url: 'ws:hiigara.net:8080',
+  msgPannel: 'msgPannel',
+  retryDelayMs: 5*60*1000, // wait 5min
+
+  uid: '',
+  nick:'',
+
+  connected: false,
+
+  checkSupport: function() {
+    var isSupported = (("WebSocket" in window && window.WebSocket != undefined) ||
+                       ("MozWebSocket" in window));
+    if (!isSupported) {
+      return false;
+    }
+    return true;
+/*
+    try{
+      var ws = new WebSocket("ws:websocket.org");
+      ws.close('');
+    }catch(e){ //throws code 15 if has socket to me babies
+      return true;
+    }
+    return false;
+*/
+  },
+
+  connect: function() {
+    if (!this.checkSupport()) {
+      this.addMsg('很抱歉，你用的瀏覽器不支援 WebSocket，我沒有辦法工作 T__T','error');
+      return;
+    }
+    if (this.ws && this.ws.readyState==1) {
+      return;
+    }
+    try{
+      this.ws = new WebSocket(this.url);
+      this.ws.onmessage = function(obj){chatClient.onmessage(obj)};
+      this.ws.onerror = function(obj){chatClient.onerror(obj)};
+      this.ws.onclose = function(obj){chatClient.onclose(obj)};
+      this.ws.onopen = function(obj){chatClient.addMsg("我連上伺服器了~", 'notice')};
+    } catch (e) {
+      if(console&&console.log){
+        console.log(e);
+      }
+    }
+  },
+
+
+  onmessage: function(obj){
+    try{
+      var data = JSON.parse(obj.data);
+    } catch(e) {
+      console.log(e);
+    }
+
+    if ('say'==data.cmd) {
+      var sender = '['+data.uid+']'+data.nick+": ";
+      var msg = data.payload;
+      this.addMsg(msg, 'say', sender);
+    }
+  },
+
+  onclose: function(){
+    this.addMsg("跟伺服器的連線斷了 T_T", 'warn');
+  },
+
+  onerror: function(){
+    this.addMsg("跟伺服器的連線怪怪的 @__@", 'error');
+  },
+
+  speak: function(msg){
+    if (!(this.ws) || !(this.ws.OPEN)) {
+        this.addMsg('很抱歉，無法送出訊息。我現在沒有連上伺服器 T_T', 'warn');
+        return;
+    }
+
+    var data = {cmd:"say", payload: msg, uid: this.uid, nick: this.nick};
+    var json = JSON.stringify(data);
+    this.ws.send(json);
+    this.onmessage({data: json});
+  },
+
+  addMsg: function(msg, type, sender){
+    $('<div>')
+      .append($('<span>').text(sender).addClass('sender'))
+      .append(document.createTextNode(msg)) //escape
+      .addClass(type)
+      .addClass('msg')
+      .prependTo(this.$msg)
+      .hide()
+      .slideDown();
+  },
+
+  presetIdentity: function(){
+    // the UID is not meant to be secure, and IT IS NOT!
+    this.uid = cookie.get('chatClient_uid');
+    if (!this.uid) {
+      this.setUID(this.makeID(5));
+    }
+
+    this.nick = cookie.get('chatClient_nick');
+    if (!this.nick) {
+      this.setNick(this.makeNick());
+    }
+  },
+
+  setNick: function(nick){
+    this.nick = nick;
+    cookie.set('chatClient_nick', nick);
+  },
+
+  setUID: function(uid){
+    this.uid = uid;
+    cookie.set('chatClient_uid', uid);
+  },
+
+  makeID: function(idLen){
+    var text = "";
+    var pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i=0; i<idLen; i++ ) {
+        text += pool.charAt(Math.floor(Math.random() * pool.length));
+    }
+
+    return text;
+  },
+
+  makeNick: function(){
+    var adj = ['水裡','火裡','山上','海邊','被窩','紅色','可愛','天真','浪漫','滾動','扭動','愛睡','糟糕','奇怪','正直','呆呆'];
+    var n = ['手機','浮雲','香蕉','蘋果','麵包','網頁','程式','客戶','平板','筆電','路人','山寨','贊助商'];
+    return adj[Math.floor(Math.random() * adj.length)]+'的'+n[Math.floor(Math.random() * n.length)];
+  }
+
+};
+
+// cookie helper
+// window.cookie, 不是 document.cookie
+cookie = {
+  set: function (name, value){
+    var Days = 30;
+    var exp  = new Date();
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+  },
+  get: function (name){
+    var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+    return (arr == null) ? null : unescape(arr[2]);
+  },
+  del: function (name){
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval=getCookie(name);
+    if(cval!=null){
+      document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+  }
+};
+
+</script>
+</body>
+</html>
