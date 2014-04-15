@@ -68,7 +68,8 @@ function createClient() {
     (function loop() {
     var rand = Math.round(Math.random() * (10000 - 5000)) + 5000;
     setTimeout(function() {
-            ws.send('C'+cnt+" barking!");
+            var data = {cmd:'say', nick:'test'+cnt, uid:'t'+cnt, payload:'汪汪'};
+            ws.send(JSON.stringify(data));
             loop();  
     }, rand);
     }());
