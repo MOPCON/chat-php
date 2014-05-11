@@ -130,7 +130,7 @@ chatClient = {
   },
 
   speak: function(msg){
-    if (!(this.ws) || !(this.ws.OPEN)) {
+    if (!this.connected) {
         this.addMsg('很抱歉，無法送出訊息。我現在沒有連上伺服器 T_T', 'warn');
         return;
     }
