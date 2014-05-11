@@ -162,13 +162,15 @@ chatClient = {
     // the UID is not meant to be secure, and IT IS NOT!
     this.uid = cookie.get('chatClient_uid');
     if (!this.uid) {
-      this.setUID(this.makeID(5));
+      this.setUID(this.makeID(6));
     }
 
     this.nick = cookie.get('chatClient_nick');
     if (!this.nick) {
       this.setNick(this.makeNick());
     }
+
+    this.addMsg("您的ID是 "+this.uid+"，暱稱是「"+this.nick+"」", 'notice');
   },
 
   setNick: function(nick){
