@@ -151,15 +151,25 @@ chatClient = {
       }
     }
 
-    if ('say'==data.cmd) {
-      var sender = '['+data.uid+']'+data.nick+": ";
-      var msg = data.payload;
-      this.addMsg(msg, 'say', sender);
-    }
-
-    if ('join'==data.cmd) {
-      var msg = '['+data.uid+']'+data.nick+" 加入了聊天室 ";
-      this.addMsg(msg, 'roomNotice', sender);
+    // 不同指令做不同動作
+    switch (data.cmd) {
+      case 'say':
+        var sender = '['+data.uid+']'+data.nick+": ";
+        var msg = data.payload;
+        this.addMsg(msg, 'say', sender);
+        break;
+      case 'join':
+        var msg = '['+data.uid+']'+data.nick+" 加入了聊天室 ";
+        this.addMsg(msg, 'roomNotice', sender);
+        break;
+      case 'nop':
+        break;
+      default:
+        if (console && console.log) {
+            console.log("無法識別的訊息物件:");
+            console.log(data);
+        }
+        break;
     }
   },
 
