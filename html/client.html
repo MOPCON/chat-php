@@ -142,10 +142,13 @@ chatClient = {
 
 
   onmessage: function(obj){
+    var data = {cmd:'nop'};
     try{
-      var data = JSON.parse(obj.data);
+      data = JSON.parse(obj.data);
     } catch(e) {
-      console.log(e);
+      if (console && console.log) {
+        console.log(e);
+      }
     }
 
     if ('say'==data.cmd) {
