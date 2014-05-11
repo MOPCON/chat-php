@@ -130,12 +130,16 @@ chatClient = {
   },
 
   speak: function(msg){
+    this.send('say', msg);
+  },
+
+  send: function(cmd, payload){
     if (!this.connected) {
         this.addMsg('很抱歉，無法送出訊息。我現在沒有連上伺服器 T_T', 'warn');
         return;
     }
 
-    var data = {cmd:"say", payload: msg, uid: this.uid, nick: this.nick};
+    var data = {cmd:cmd, payload: payload, uid: this.uid, nick: this.nick};
     var json = JSON.stringify(data);
     this.ws.send(json);
     this.onmessage({data: json});
