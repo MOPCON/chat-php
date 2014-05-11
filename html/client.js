@@ -129,9 +129,20 @@ chatClient = {
         return false;
     }
 
-    var data = {cmd:cmd, payload: payload, uid: this.uid, nick: this.nick};
+    var data = {cmd:cmd, payload: payload};
+
+    if ('join'===cmd) {
+      data.uid = this.uid;
+      data.nick = this.nick;
+    }
+
     var json = JSON.stringify(data);
     this.ws.send(json);
+
+
+    data.uid = this.uid;
+    data.nick = this.nick;
+    json = JSON.stringify(data);
     this.onmessage({data: json});
     return true;
   },

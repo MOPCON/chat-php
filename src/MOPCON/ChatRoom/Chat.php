@@ -36,6 +36,9 @@ class Chat implements MessageComponentInterface {
                 break;
         }
 
+        $data['uid'] = $this->session[$id]['uid'];
+        $data['nick'] = $this->session[$id]['nick'];
+
         if (!$send_to_others) {
             return;
         }
