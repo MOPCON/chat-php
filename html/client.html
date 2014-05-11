@@ -142,7 +142,13 @@ chatClient = {
   },
 
   addMsg: function(msg, type, sender){
+    // 時間
+    var now = new Date();
+    var hour = now.get
+    var nowStr = "["+now.toLocaleString()+"] ";
+    // 顯示訊息
     $('<div>')
+      .append($('<span>').text(nowStr))
       .append($('<span>').text(sender).addClass('sender'))
       .append(document.createTextNode(msg)) //escape
       .addClass(type)
