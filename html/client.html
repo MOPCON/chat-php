@@ -96,8 +96,11 @@ chatClient = {
   maxMsgNum: 1000,
   retryDelayMs: 5*60*1000, // wait 5min
 
-  uid: '',
-  nick:'',
+  uidCookieName: 'a',
+  nickCookieName: 'b',
+
+  uid: false,
+  nick: false,
 
   connected: false,
 
@@ -236,12 +239,12 @@ chatClient = {
 
   presetIdentity: function(){
     // the UID is not meant to be secure, and IT IS NOT!
-    this.uid = cookie.get('chatClient_uid');
+    this.uid = cookie.get(this.uidCookieName);
     if (!this.uid) {
       this.setUID(this.makeID(6));
     }
 
-    this.nick = cookie.get('chatClient_nick');
+    this.nick = cookie.get(this.nickCookieName);
     if (!this.nick) {
       this.setNick(this.makeNick());
     }
@@ -251,12 +254,12 @@ chatClient = {
 
   setNick: function(nick){
     this.nick = nick;
-    cookie.set('chatClient_nick', nick);
+    cookie.set(this.nickCookieName, nick);
   },
 
   setUID: function(uid){
     this.uid = uid;
-    cookie.set('chatClient_uid', uid);
+    cookie.set(this.uidCookieName, uid);
   },
 
   makeID: function(idLen){
