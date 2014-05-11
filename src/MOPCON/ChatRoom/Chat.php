@@ -17,6 +17,11 @@ class Chat implements MessageComponentInterface {
 
         $this->session[$conn->resourceId] = [];
         echo "新連線({$conn->resourceId})，目前共有 ".count($this->clients)." 個連線\n";
+
+        $recentMsgs = $this->readRecentMsg();
+        foreach($recentMsgs as $msg){
+            $conn->send($msg);
+        }
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
@@ -28,7 +33,6 @@ class Chat implements MessageComponentInterface {
             return;
         }
 
-        $send_to_others = true;
         switch ($data['cmd']) {
             case 'join':
                 $this->session[$id]['uid'] = $data['uid'];
@@ -39,10 +43,6 @@ class Chat implements MessageComponentInterface {
         $data['uid'] = $this->session[$id]['uid'];
         $data['nick'] = $this->session[$id]['nick'];
 
-        if (!$send_to_others) {
-            return;
-        }
-
         $msg = json_encode($data);
         foreach ($this->clients as $client) {
             if ($from !== $client) {
@@ -50,6 +50,8 @@ class Chat implements MessageComponentInterface {
                 $client->send($msg);
             }
         }
+
+        $this->logMsg($msg);
     }
 
     public function onClose(ConnectionInterface $conn) {
@@ -65,5 +67,32 @@ class Chat implements MessageComponentInterface {
 
         unset($this->session[$conn->resourceId]);
         $conn->close();
+    }
+
+    public function logMsg($msg) {
+        // TODO 先暫時寫檔案，以後再想應該怎麼有效地讀寫
+        $fh = @fopen('chatRoom.log', 'a');
+        if (!$fh) {
+            return;
+        }
+        @fputs($fh, $msg);
+        @fputs($fh, "\n");
+        @fclose($fh);
+    }
+
+    public function readRecentMsg($cnt = 50) {
+        // TODO 先暫時寫檔案，以後再想應該怎麼有效地讀寫
+        $lines = @file('chatRoom.log');
+        if (!is_array($lines)) {
+            return [];
+        }
+
+        $length = count($lines);
+        if ($length > $cnt) {
+            $idx = $length - $cnt;
+            return array_slice($lines, $idx);
+        } else {
+            return $lines;
+        }
     }
 }
