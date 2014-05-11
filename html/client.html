@@ -93,6 +93,7 @@ chatClient = {
   url: 'ws:hiigara.net:8080',
   msgPannel: 'msgPannel',
   input: 'msgInput',
+  maxMsgNum: 1000,
   retryDelayMs: 5*60*1000, // wait 5min
 
   uid: '',
@@ -223,6 +224,14 @@ chatClient = {
       .prependTo(this.$msg)
       .hide()
       .slideDown();
+
+    //太多的訊息就砍掉
+    var $msgs = this.$msg.children();
+    if ($msgs.length>this.maxMsgNum) {
+        for (var idx=this.maxMsgNum; idx<$msgs.length; idx++) {
+            $msgs.eq(idx).slideUp('', function(){$(this).remove()});
+        }
+    }
   },
 
   presetIdentity: function(){
