@@ -14,17 +14,15 @@ class Chat implements MessageComponentInterface {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
 
-        echo "New connection! ({$conn->resourceId}), ".count($this->clients)." total.\n";
+        echo "新連線({$conn->resourceId})，目前共有 ".count($this->clients)." 個連線\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $numRecv = count($this->clients) - 1;
         echo sprintf(
-                'Connection %d sending message "%s" to %d other connection%s'."\n"
+                '[%d]表示： %s'."\n"
                 ,$from->resourceId
                 ,$msg
-                ,$numRecv
-                ,$numRecv == 1 ? '' : 's'
             );
 
         foreach ($this->clients as $client) {
@@ -39,12 +37,11 @@ class Chat implements MessageComponentInterface {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
 
-        echo "Connection {$conn->resourceId} has disconnected, ".count($this->clients)." left.\n";
+        echo "連線({$conn->resourceId})已中斷，目前還有 ".count($this->clients)." 個連線\n";
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "An error has occurred: {$e->getMessage()}\n";
-
+        echo "連線($conn->resourceId)發生問題！{$e->getMessage()}\n";
         $conn->close();
     }
 }
