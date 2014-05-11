@@ -97,6 +97,7 @@ chatClient = {
       this.ws.onerror = function(obj){chatClient.onerror(obj)};
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
       this.ws.onopen = function(obj){chatClient.addMsg("我連上伺服器了~", 'notice')};
+      this.connected = true;
     } catch (e) {
       if(console&&console.log){
         console.log(e);
@@ -121,6 +122,7 @@ chatClient = {
 
   onclose: function(){
     this.addMsg("跟伺服器的連線斷了 T_T", 'warn');
+    this.connected = false;
   },
 
   onerror: function(){
