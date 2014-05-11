@@ -27,6 +27,10 @@ html,body{margin:0;padding:0;}
   background-color: rgba(30, 150, 255, 0.15);
   color:#567;
 }
+.roomNotice{
+  background-color: rgba(30, 255, 150, 0.15);
+  color:#576;
+}
 .sender{color:blue;}
 </style>
 <!--[if lt IE 9]>
@@ -96,7 +100,7 @@ chatClient = {
       this.ws.onmessage = function(obj){chatClient.onmessage(obj)};
       this.ws.onerror = function(obj){chatClient.onerror(obj)};
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
-      this.ws.onopen = function(obj){chatClient.addMsg("我連上伺服器了~", 'notice')};
+      this.ws.onopen = function(obj){chatClient.onopen(obj)};
       this.connected = true;
     } catch (e) {
       if(console&&console.log){
@@ -118,6 +122,11 @@ chatClient = {
       var msg = data.payload;
       this.addMsg(msg, 'say', sender);
     }
+
+    if ('join'==data.cmd) {
+      var msg = '['+data.uid+']'+data.nick+" 加入了聊天室 ";
+      this.addMsg(msg, 'roomNotice', sender);
+    }
   },
 
   onclose: function(){
@@ -127,6 +136,11 @@ chatClient = {
 
   onerror: function(){
     this.addMsg("跟伺服器的連線怪怪的 @__@", 'error');
+  },
+
+  onopen: function(){
+    this.addMsg('我連上伺服器了～', 'notice');
+    this.send('join');
   },
 
   speak: function(msg){
