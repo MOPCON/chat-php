@@ -64,6 +64,9 @@ function createClient() {
     ws.onclose = function() {
         $e.text('Close!');
     }
+    ws.onopen = function() {
+        this.send('{"cmd":"join","uid":"t'+cnt+'","nick":"Clone No.'+cnt+'"}');
+    }
     if (cnt > 3) {
         return;
     }
