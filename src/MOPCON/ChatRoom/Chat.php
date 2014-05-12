@@ -44,7 +44,7 @@ class Chat implements MessageComponentInterface {
         $data['nick'] = $this->session[$id]['nick'];
         $data['time'] = microtime($as_float = true);
 
-        $msg = json_encode($data);
+        $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
         foreach ($this->clients as $client) {
             if ($from !== $client) {
                 // The sender is not the receiver, send to each client connected
