@@ -20,6 +20,9 @@ class Chat implements MessageComponentInterface {
 
         $recentMsgs = $this->readRecentMsg();
         foreach($recentMsgs as $msg){
+            $data = json_decode($msg, $as_array = true);
+            $data['isReplay'] = true;
+            $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
             $conn->send($msg);
         }
     }

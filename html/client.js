@@ -81,7 +81,8 @@ chatClient = {
     }
 
     // 不處理「自己」送出的訊息
-    if (!fromLocal && this.uid===data.uid) {
+    // 不過連上線的時候顯示的歷史訊息除外
+    if (!fromLocal && this.uid===data.uid && !data.isReplay) {
         return;
     }
 
