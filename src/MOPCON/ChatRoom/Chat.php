@@ -44,15 +44,7 @@ class Chat implements MessageComponentInterface {
         $data['nick'] = $this->session[$id]['nick'];
         $data['time'] = microtime($as_float = true);
 
-        $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
-        foreach ($this->clients as $client) {
-            if ($from !== $client) {
-                // The sender is not the receiver, send to each client connected
-                $client->send($msg);
-            }
-        }
-
-        $this->logMsg($msg);
+        $this->broadCast($data);
     }
 
     public function onClose(ConnectionInterface $conn) {
@@ -64,13 +56,7 @@ class Chat implements MessageComponentInterface {
             'time' => microtime($as_float = true),
             'serverMsg' => true
         ];
-        $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
-        foreach ($this->clients as $client) {
-            if ($conn!== $client) {
-                $client->send($msg);
-            }
-        }
-        $this->logMsg($msg);
+        $this->broadCast($data);
 
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
@@ -84,6 +70,20 @@ class Chat implements MessageComponentInterface {
 
         unset($this->session[$conn->resourceId]);
         $conn->close();
+    }
+
+    public function broadCast($data) {
+        if (is_array($data)) {
+            $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
+        } else {
+            $msg = (string) $data;
+        }
+
+        foreach ($this->clients as $client) {
+            $client->send($msg);
+        }
+
+        $this->logMsg($msg);
     }
 
     public function logMsg($msg) {
