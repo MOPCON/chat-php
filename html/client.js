@@ -90,6 +90,10 @@ chatClient = {
         var msg = '['+data.uid+']'+data.nick+" 加入了聊天室 ";
         this.addMsg(msg, 'roomNotice', sender, data.time);
         break;
+      case 'leave':
+        var msg = '['+data.uid+']'+data.nick+" 離開了聊天室 ";
+        this.addMsg(msg, 'roomNotice', sender, data.time);
+        break;
       case 'nop':
         break;
       default:

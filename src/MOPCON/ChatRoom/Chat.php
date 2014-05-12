@@ -56,6 +56,22 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onClose(ConnectionInterface $conn) {
+        $id = $conn->resourceId;
+        $data = [
+            'cmd' => 'leave',
+            'uid' => $this->session[$id]['uid'],
+            'nick' => $this->session[$id]['nick'],
+            'time' => microtime($as_float = true),
+            'serverMsg' => true
+        ];
+        $msg = json_encode($data, JSON_UNESCAPED_UNICODE);
+        foreach ($this->clients as $client) {
+            if ($conn!== $client) {
+                $client->send($msg);
+            }
+        }
+        $this->logMsg($msg);
+
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
 
