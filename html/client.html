@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <style type="text/css">
 html,body{margin:0;padding:0;}
-#msgPannel{
+#msgPannel, #noticePannel{
   font-size: 12px;
   line-height: 1.3em;
   height:90%;
@@ -14,24 +14,34 @@ html,body{margin:0;padding:0;}
 .msg{padding: 1px 0.8em;}
 .error{
   background-color: rgba(255, 0, 0, 0.15);
+  border-color: rgba(255, 0, 0, 0.45);
   color:#f22;
 }
 .warn{
   background-color: rgba(255, 180, 150, 0.15);
+  border-color: rgba(200, 90, 75, 0.45);
   color:#a72;
 }
 .say{
   color:#333;
-}
-.notice{
-  background-color: rgba(30, 150, 255, 0.15);
-  color:#567;
 }
 .roomNotice{
   background-color: rgba(30, 255, 150, 0.15);
   color:#576;
 }
 .sender{color:blue;}
+
+.notice{
+  padding: 1px 0.8em;
+  border-width: 1px;
+  border-style: solid;
+  border-top:none;
+}
+.normal{
+  background-color: rgba(30, 150, 255, 0.15);
+  border-color: #369;
+  color:#567;
+}
 
 #actPannel{
   background-color: #777;
@@ -45,6 +55,7 @@ html,body{margin:0;padding:0;}
 }
 #actPannel input{
   width:90%;
+  font-family: monospace;
 }
 </style>
 <!--[if lt IE 9]>
@@ -59,6 +70,10 @@ html,body{margin:0;padding:0;}
 <body>
 <noscript>您必須開啟 Javascript 功能才能使用聊天室</noscript>
 <div id=''>
+
+<div id='noticePannel'>
+</div>
+
 <div id='msgPannel'>
 </div>
 

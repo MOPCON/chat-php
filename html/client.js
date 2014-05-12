@@ -1,7 +1,7 @@
 $(function(){
   chatClient.$msg = $('#'+chatClient.msgPannel);
   chatClient.$input = $('#'+chatClient.input);
-  chatClient.addMsg('聊天室小精靈啟動！', 'notice');
+  chatClient.addNotice('聊天室小精靈啟動！', 'normal');
   chatClient.presetIdentity();
   chatClient.connect();
 
@@ -61,9 +61,7 @@ chatClient = {
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
       this.ws.onopen = function(obj){chatClient.onopen(obj)};
       this.connected = true;
-      setTimeout(function(){
-          chatClient.addMsg("您的ID是 "+chatClient.uid+"，暱稱是「"+chatClient.nick+"」", 'notice');
-      }, 200);
+      chatClient.addNotice("您的ID是 "+chatClient.uid+"，暱稱是「"+chatClient.nick+"」", 'normal');
     } catch (e) {
       if(console&&console.log){
         console.log(e);
@@ -117,16 +115,16 @@ chatClient = {
   },
 
   onclose: function(){
-    this.addMsg("跟伺服器的連線斷了 T_T", 'warn');
+    this.addNotice("跟伺服器的連線斷了 T_T", 'warn');
     this.connected = false;
   },
 
   onerror: function(){
-    this.addMsg("跟伺服器的連線怪怪的 @__@", 'error');
+    this.addNotice("跟伺服器的連線怪怪的 @__@", 'error');
   },
 
   onopen: function(){
-    this.addMsg('我連上伺服器了～', 'notice');
+    this.addNotice('我連上伺服器了～', 'normal');
     this.send('join');
   },
 
@@ -185,6 +183,23 @@ chatClient = {
             $msgs.eq(idx).slideUp('', function(){$(this).remove()});
         }
     }
+  },
+
+  addNotice: function(msg, type) {
+    var delayTimeMs = 3000;
+    if ('error'==type || 'warn'==type) {
+        delayTimeMs = 8000;
+    }
+    // 顯示提示
+    $('<div>')
+      .append(document.createTextNode(msg)) //escape
+      .addClass('notice')
+      .addClass(type)
+      .prependTo($('#noticePannel'))
+      .hide()
+      .slideDown()
+      .delay(delayTimeMs)
+      .slideUp('', function(){$(this).remove()});
   },
 
   presetIdentity: function(){
