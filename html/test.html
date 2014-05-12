@@ -56,7 +56,13 @@ function createClient() {
     $('body').append($e);
     var ws = new WebSocket(CHATROOM_URL);
     ws.onmessage = function(obj) {
-    	$e.text(obj.data);
+        var data = JSON.parse(obj.data);
+        if ('say'===data.cmd) {
+            $e.text(data.payload);
+        } else {
+            $e.text(data.cmd);
+        }
+        
     };
     ws.onerror = function() {
         $e.text('Error!');
@@ -73,7 +79,7 @@ function createClient() {
     (function loop() {
     var rand = Math.round(Math.random() * (10000 - 5000)) + 5000;
     setTimeout(function() {
-            var data = {cmd:'say', nick:'test'+cnt, uid:'t'+cnt, payload:'汪汪'};
+            var data = {cmd:'say', nick:'test'+cnt, uid:'t'+cnt, payload:'汪汪 from '+cnt};
             ws.send(JSON.stringify(data));
             loop();  
     }, rand);
