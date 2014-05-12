@@ -84,11 +84,11 @@ chatClient = {
       case 'say':
         var sender = '['+data.uid+']'+data.nick+": ";
         var msg = data.payload;
-        this.addMsg(msg, 'say', sender);
+        this.addMsg(msg, 'say', sender, data.time);
         break;
       case 'join':
         var msg = '['+data.uid+']'+data.nick+" 加入了聊天室 ";
-        this.addMsg(msg, 'roomNotice', sender);
+        this.addMsg(msg, 'roomNotice', sender, data.time);
         break;
       case 'nop':
         break;
@@ -147,15 +147,14 @@ chatClient = {
     return true;
   },
 
-  addMsg: function(msg, type, sender){
+  addMsg: function(msg, type, sender, time){
     // 時間
-    var now = new Date();
-    var hour = now.get
-    var nowStr = "["+now.toLocaleTimeString()+"] ";
+    time = time ? new Date(time*1000)  : new Date();
+    var timeStr = "["+time.toLocaleTimeString()+"] ";
 
     // 顯示訊息
     $('<div>')
-      .append($('<span>').text(nowStr))
+      .append($('<span>').text(timeStr))
       .append($('<span>').text(sender).addClass('sender'))
       .append(document.createTextNode(msg)) //escape
       .addClass(type)

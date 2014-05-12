@@ -42,6 +42,7 @@ class Chat implements MessageComponentInterface {
 
         $data['uid'] = $this->session[$id]['uid'];
         $data['nick'] = $this->session[$id]['nick'];
+        $data['time'] = microtime($as_float = true);
 
         $msg = json_encode($data);
         foreach ($this->clients as $client) {
