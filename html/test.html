@@ -18,7 +18,9 @@
 </head>
 <body>
 <noscript>您必須開啟 Javascript 功能才能使用聊天室</noscript>
-<button id='addClient'>Add Client</button><hr>
+<button id='addClient'>Add Client</button><br>
+<button id='addTenClients'>Add 10 Clients</button><br>
+<hr>
 <script>
 $(function(){
 var CHATROOM_URL = 'ws:mopcon.org:8086';
@@ -76,6 +78,18 @@ function createClient() {
 }
 
 $('#addClient').on('click', createClient);
+$('#addTenClients').on('click', function(){
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+    createClient();
+});
 
 });
 </script>
