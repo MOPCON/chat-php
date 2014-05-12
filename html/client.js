@@ -76,6 +76,7 @@ chatClient = {
     } catch(e) {
       if (console && console.log) {
         console.log(e);
+        return;
       }
     }
 
