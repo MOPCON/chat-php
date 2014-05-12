@@ -29,7 +29,7 @@ function checkWebSocket() {
   var isSupported = (("WebSocket" in window && window.WebSocket != undefined) ||
                      ("MozWebSocket" in window));
   if (!isSupported) {
-  	return false;
+    return false;
   }
 
   try{
@@ -45,13 +45,13 @@ function checkWebSocket() {
 clientCount = 0;
 
 function createClient() {
-	var cnt = (clientCount++);
-	if (cnt<10) {
-		cnt = '0'+cnt;
-	}
-	if (cnt<100) {
-		cnt = '0'+cnt;
-	}
+    var cnt = (clientCount++);
+    if (cnt<10) {
+        cnt = '0'+cnt;
+    }
+    if (cnt<100) {
+        cnt = '0'+cnt;
+    }
     var $e = $('<div class="client">Rdy!<br></div>');
     $('body').append($e);
     var ws = new WebSocket(CHATROOM_URL);
@@ -59,13 +59,13 @@ function createClient() {
     	$e.text(obj.data);
     };
     ws.onerror = function() {
-    	$e.text('Error!');
+        $e.text('Error!');
     }
     ws.onclose = function() {
-    	$e.text('Close!');
+        $e.text('Close!');
     }
     if (cnt > 3) {
-  	    return;
+        return;
     }
     (function loop() {
     var rand = Math.round(Math.random() * (10000 - 5000)) + 5000;
