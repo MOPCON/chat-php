@@ -56,7 +56,7 @@ chatClient = {
     }
     try{
       this.ws = new WebSocket(this.url);
-      this.ws.onmessage = function(obj){chatClient.onmessage(obj)};
+      this.ws.onmessage = function(obj){chatClient.onmessage(obj, false)};
       this.ws.onerror = function(obj){chatClient.onerror(obj)};
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
       this.ws.onopen = function(obj){chatClient.onopen(obj)};
@@ -69,7 +69,7 @@ chatClient = {
   },
 
 
-  onmessage: function(obj){
+  onmessage: function(obj, fromLocal){
     var data = {cmd:'nop'};
     try{
       data = JSON.parse(obj.data);
@@ -78,6 +78,11 @@ chatClient = {
         console.log(e);
         return;
       }
+    }
+
+    // 不處理「自己」送出的訊息
+    if (!fromLocal && this.uid===data.uid) {
+        return;
     }
 
     // 不同指令做不同動作
@@ -148,7 +153,7 @@ chatClient = {
     data.uid = this.uid;
     data.nick = this.nick;
     json = JSON.stringify(data);
-    this.onmessage({data: json});
+    this.onmessage({data: json}, true);
     return true;
   },
 
