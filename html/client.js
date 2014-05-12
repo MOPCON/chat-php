@@ -61,6 +61,9 @@ chatClient = {
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
       this.ws.onopen = function(obj){chatClient.onopen(obj)};
       this.connected = true;
+      setTimeout(function(){
+          chatClient.addMsg("您的ID是 "+chatClient.uid+"，暱稱是「"+chatClient.nick+"」", 'notice');
+      }, 200);
     } catch (e) {
       if(console&&console.log){
         console.log(e);
@@ -76,8 +79,9 @@ chatClient = {
     } catch(e) {
       if (console && console.log) {
         console.log(e);
-        return;
+        console.log(obj.data);
       }
+      return;
     }
 
     // 不處理「自己」送出的訊息
@@ -194,8 +198,6 @@ chatClient = {
     if (!this.nick) {
       this.setNick(this.makeNick());
     }
-
-    this.addMsg("您的ID是 "+this.uid+"，暱稱是「"+this.nick+"」", 'notice');
   },
 
   setNick: function(nick){
