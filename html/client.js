@@ -55,13 +55,12 @@ chatClient = {
       return;
     }
     try{
+      this.addNotice('連線中...','normal');
       this.ws = new WebSocket(this.url);
       this.ws.onmessage = function(obj){chatClient.onmessage(obj, false)};
       this.ws.onerror = function(obj){chatClient.onerror(obj)};
       this.ws.onclose = function(obj){chatClient.onclose(obj)};
       this.ws.onopen = function(obj){chatClient.onopen(obj)};
-      this.connected = true;
-      chatClient.addNotice("您的ID是 "+chatClient.uid+"，暱稱是「"+chatClient.nick+"」", 'normal');
     } catch (e) {
       if(console&&console.log){
         console.log(e);
@@ -124,7 +123,8 @@ chatClient = {
   },
 
   onopen: function(){
-    this.addNotice('我連上伺服器了～', 'normal');
+    this.addNotice("連上伺服器了～您的ID是 "+chatClient.uid+"，暱稱是「"+chatClient.nick+"」", 'normal');
+    this.connected = true;
     this.send('join');
   },
 
