@@ -14,7 +14,7 @@ $(function(){
 
 
 chatClient = {
-  url: 'ws:localhost:8080',
+  url: 'ws:mopcon.org:8086',
   msgPannel: 'msgPannel',
   input: 'msgInput',
   maxMsgNum: 1000,
