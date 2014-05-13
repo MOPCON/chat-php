@@ -51,6 +51,10 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onClose(ConnectionInterface $conn) {
+        // The connection is closed, remove it, as we can no longer send it messages
+        $this->clients->detach($conn);
+
+        // tell everyone that this connection has gone away
         $id = $conn->resourceId;
         $data = [
             'cmd' => 'leave',
@@ -60,9 +64,6 @@ class Chat implements MessageComponentInterface {
             'serverMsg' => true
         ];
         $this->broadCast($data);
-
-        // The connection is closed, remove it, as we can no longer send it messages
-        $this->clients->detach($conn);
 
         unset($this->session[$conn->resourceId]);
         echo "連線({$conn->resourceId})已中斷，目前還有 ".count($this->clients)." 個連線\n";
